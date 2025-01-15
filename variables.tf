@@ -8,7 +8,7 @@ variable "region" {
   type        = string
 }
 
-variable "instance_name_prefix" {
+variable "name" {
   description = "Prefix for instance and resource names"
   type        = string
 }

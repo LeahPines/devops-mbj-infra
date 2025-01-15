@@ -4,7 +4,7 @@ provider "google" {
 }
 
 resource "google_compute_instance_template" "instance_template" {
-  name_prefix = "${var.instance_name_prefix}-template"
+  name_prefix = "${var.name}-template"
   machine_type = var.machine_type
   region       = var.region
 
@@ -27,8 +27,8 @@ resource "google_compute_instance_template" "instance_template" {
 }
 
 resource "google_compute_region_instance_group_manager" "mig" {
-  name                  = "${var.instance_name_prefix}-mig"
-  base_instance_name    = "${var.instance_name_prefix}-instance"
+  name                  = "${var.name}-mig"
+  base_instance_name    = "${var.name}-instance"
   region                = var.region
   version {
     instance_template = google_compute_instance_template.instance_template.self_link
@@ -39,7 +39,7 @@ resource "google_compute_region_instance_group_manager" "mig" {
 }
 
 resource "google_compute_region_autoscaler" "autoscaler" {
-  name = "${lower(var.instance_name_prefix)}-autoscaler"
+  name = "${lower(var.name)}-autoscaler"
   region  = var.region
   target  = google_compute_region_instance_group_manager.mig.self_link
 
@@ -55,7 +55,7 @@ resource "google_compute_region_autoscaler" "autoscaler" {
 }
 
 resource "google_compute_region_health_check" "health_check" {
-  name                = "${var.instance_name_prefix}-health-check"
+  name                = "${var.name}-health-check"
   region              = var.region
   http_health_check {
     request_path = "/"
@@ -64,7 +64,7 @@ resource "google_compute_region_health_check" "health_check" {
 }
 
 resource "google_compute_firewall" "health_check_firewall" {
-  name = "${lower(var.instance_name_prefix)}-hc-firewall"
+  name = "${lower(var.name)}-hc-firewall"
   network = "default"
 
   allow {
